@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+	<property name="LOG_FILE" value="/var/logs/kepler-service/root.log"/>
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+	<logger name="org.apache.kafka" level="INFO"/>
+	<logger name="org.apache.zookeeper" level="INFO"/>
+	<logger name="org.drools" level="debug"/>
+	<!-- 测试环境+开发环境. 多个使用逗号隔开. -->
+	<springProfile name="dev,test">
+		<root level="info">
+		    <appender-ref ref="CONSOLE" />
+		    <appender-ref ref="FILE" />
+		</root>
+	</springProfile>
+
+	<!-- 生产环境. -->
+	<springProfile name="prod">
+		<appender-ref ref="FILE" />
+	</springProfile>
+	<root level="info">
+		    <appender-ref ref="CONSOLE" />
+		</root>
+</configuration>
