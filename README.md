@@ -1,6 +1,18 @@
+### 系统环境
+- JDK1.8
+- SpringBoot 2.0.3.RELEASE
+- kafka_2.12-1.1.0 
+- filebeat-6.3.0-windows-x86_64
+- grok日志解析
+- Maven
+- lombok
+- guava
+- gson
+
 ### 模块说明
 监控系统-kafka消息监听模块。通过filebeat从服务器上收集日志信息，传递到kafka，在该模块中实现消息的监听，对日志进行解析，进而做下一步的处理操作.
 使用grok作为日志分析框架提炼日志内容
+
 ### 日志格式：log4j.xml
 ```xml
 <appender name="file-log" class="org.apache.log4j.DailyRollingFileAppender">
@@ -48,3 +60,10 @@ filebeat.config.modules:
   # Set to true to enable config reloading
   reload.enabled: false
 ```
+
+### kafka服务器端相关操作命令你
+> kafka-server-start.bat server.properties
+> kafka-console-consumer.bat --zookeeper localhost:2181 --topic lxw1234
+> kafka-topics.bat --list --zookeeper localhost:2181
+> kafka-console-producer.bat --broker-list localhost:9092 --topic lxw1234
+> kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic lxw1234 --from-beginning
