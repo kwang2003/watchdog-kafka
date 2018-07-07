@@ -52,13 +52,43 @@ output.kafka:
 核心配置-监听指定文件
 
 ```
-#============================= Filebeat modules ===============================
-filebeat.config.modules:
-  # Glob pattern for configuration loading
-  path: ${path.config}/modules.d/*.yml
+#=========================== Filebeat inputs =============================
 
-  # Set to true to enable config reloading
-  reload.enabled: false
+filebeat.inputs:
+
+# Each - is an input. Most options can be set at the input level, so
+# you can use different inputs for various configurations.
+# Below are the input specific configurations.
+
+- type: log
+
+  # Change to true to enable this input configuration.
+  enabled: true
+
+  # Paths that should be crawled and fetched. Glob based paths.
+  paths:
+#    - /var/log/*.log
+    - D:\home\admin\output\logs\javalog\order-service.log
+    #- c:\programdata\elasticsearch\logs\*
+  encoding:
+    utf-8
+  # Exclude lines. A list of regular expressions to match. It drops the lines that are
+  # matching any regular expression from the list.
+  #exclude_lines: ['^DBG']
+
+  # Include lines. A list of regular expressions to match. It exports the lines that are
+  # matching any regular expression from the list.
+  #include_lines: ['^ERR', '^WARN']
+
+  # Exclude files. A list of regular expressions to match. Filebeat drops the files that
+  # are matching any regular expression from the list. By default, no files are dropped.
+  #exclude_files: ['.gz$']
+
+  # Optional additional fields. These fields can be freely picked
+  # to add additional information to the crawled log files for filtering
+  fields:
+    ip: 10.130.53.189
+    app_id: order-service
 ```
 
 ### kafka服务器端相关操作命令你

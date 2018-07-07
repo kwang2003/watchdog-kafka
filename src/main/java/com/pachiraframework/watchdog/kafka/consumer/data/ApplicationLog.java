@@ -14,4 +14,5 @@ public class ApplicationLog {
 	private String source;
 	private Long offset;
 	private String message;
+	private Fields fields;
 }

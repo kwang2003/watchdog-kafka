@@ -44,9 +44,9 @@ filebeat.inputs:
 
   # Optional additional fields. These fields can be freely picked
   # to add additional information to the crawled log files for filtering
-  #fields:
-  #  level: debug
-  #  review: 1
+  fields:
+    ip: 10.130.53.189
+    app_id: order-service
 
   ### Multiline options
 

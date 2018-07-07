@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pachiraframework.watchdog.kafka.consumer.data.ApplicationLog;
+import com.pachiraframework.watchdog.kafka.consumer.data.LogMessage;
 
 import io.krakens.grok.api.Grok;
 import io.krakens.grok.api.GrokCompiler;
@@ -53,11 +54,21 @@ public class ApplicationLogConsumer extends AbstractKafkaConsumer {
 		ApplicationLog applicationLog = gson.fromJson(message, ApplicationLog.class);
 		Match match = applicationLogGrok.match(applicationLog.getMessage());
 		final Map<String, Object> capture = match.capture();
-		log.info("{}",capture);
-		log.info("{}",applicationLog);
-		log.info(message);
-		log.info(cr.topic());
-		log.info(cr.toString());
+		LogMessage logMessage = buildLogMessage(capture);
+		logMessage.setHost(applicationLog.getFields()==null?applicationLog.getBeat().getHostname():applicationLog.getFields().getIp());
+		logMessage.setAppId(applicationLog.getFields()== null?"NOT_PROVIDED":applicationLog.getFields().getAppId());
+		log.info("{}",logMessage);
+	}
+	
+	
+	private LogMessage buildLogMessage(Map<String, Object> capture) {
+		String level = (String)capture.get("level");
+		String message = (String)capture.get("message");
+		String timestamp = (String)capture.get("timestamp");
+		String location = (String)capture.get("location");
+		LogMessage logMessage = LogMessage.builder().level(level).location(location).timestamp(timestamp)
+				.message(message).build();
+		return logMessage;
 	}
 	
 	@SneakyThrows
