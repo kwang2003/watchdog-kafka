@@ -68,7 +68,7 @@ filebeat.inputs:
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
 #    - /var/log/*.log
-    - D:\home\admin\output\logs\javalog\order-service.log
+    - D:\web3.log
     #- c:\programdata\elasticsearch\logs\*
   encoding:
     utf-8
@@ -89,6 +89,22 @@ filebeat.inputs:
   fields:
     ip: 10.130.53.189
     app_id: order-service
+
+  ### Multiline options
+
+  # Mutiline can be used for log messages spanning multiple lines. This is common
+  # for Java Stack Traces or C-Line Continuation
+
+  # The regexp Pattern that has to be matched. The example pattern matches all lines starting with [
+  multiline.pattern: ^\[
+
+  # Defines if the pattern set under pattern should be negated or not. Default is false.
+  multiline.negate: true
+
+  # Match can be set to "after" or "before". It is used to define if lines should be append to a pattern
+  # that was (not) matched before or after or as long as a pattern is not matched based on negate.
+  # Note: After is the equivalent to previous and before is the equivalent to to next in Logstash
+  multiline.match: after
 ```
 
 ### kafka服务器端相关操作命令你

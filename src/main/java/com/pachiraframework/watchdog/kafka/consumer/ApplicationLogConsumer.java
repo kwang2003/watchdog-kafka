@@ -48,16 +48,14 @@ public class ApplicationLogConsumer extends AbstractKafkaConsumer {
 	private Gson gson = new GsonBuilder().create();
 	@KafkaListener(topics = "lxw1234")
 	public void listen(ConsumerRecord<Integer, String> cr) throws Exception {
-		int partition = cr.partition();
-		log.info("partition={}",partition);
 		String message = cr.value();
 		ApplicationLog applicationLog = gson.fromJson(message, ApplicationLog.class);
+		log.info("{}",applicationLog.getMessage());
 		Match match = applicationLogGrok.match(applicationLog.getMessage());
 		final Map<String, Object> capture = match.capture();
 		LogMessage logMessage = buildLogMessage(capture);
 		logMessage.setHost(applicationLog.getFields()==null?applicationLog.getBeat().getHostname():applicationLog.getFields().getIp());
 		logMessage.setAppId(applicationLog.getFields()== null?"NOT_PROVIDED":applicationLog.getFields().getAppId());
-		log.info("{}",logMessage);
 	}
 	
 	

@@ -1,6 +1,5 @@
 package com.pachiraframework.watchdog.kafka.config;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -13,6 +12,8 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+
+import com.google.common.collect.Maps;
 
 /**
  * @author wangxuzheng
@@ -38,7 +39,7 @@ public class KafkaConfig {
 
 	@Bean
 	public Map<String, Object> consumerConfigs() {
-		Map<String, Object> props = new HashMap<>();
+		Map<String, Object> props = Maps.newHashMap();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, this.kafkaServers);
 		props.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);

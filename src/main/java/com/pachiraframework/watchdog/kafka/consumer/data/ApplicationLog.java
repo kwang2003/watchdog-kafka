@@ -4,6 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import lombok.Data;
 
+/**
+ * 应用日志数据封装
+ * @author wangxuzheng
+ *
+ */
 @Data
 public class ApplicationLog {
 	@SerializedName("@timestamp")
