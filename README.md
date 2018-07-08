@@ -110,11 +110,15 @@ filebeat.inputs:
 ### kafka服务器端相关操作命令
 启动kafka
 > kafka-server-start.bat server.properties
+
 启动kafka consumer(topic名称是lxw1234)
 > kafka-console-consumer.bat --zookeeper localhost:2181 --topic lxw1234
+
 查看topic列表
 > kafka-topics.bat --list --zookeeper localhost:2181
+
 启动topic为lxw1234的生产者方（可以直接在控制台往topic中发送消息）
 > kafka-console-producer.bat --broker-list localhost:9092 --topic lxw1234
+
 启动消费者，从topic的开始位置消费消息
 > kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic lxw1234 --from-beginning
