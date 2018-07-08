@@ -164,3 +164,6 @@ filebeat.inputs:
 
 启动消费者，从topic的开始位置消费消息
 > kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic lxw1234 --from-beginning
+
+创建异常日志队列5个分区
+> kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic exception-topic
