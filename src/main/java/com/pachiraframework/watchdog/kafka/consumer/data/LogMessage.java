@@ -1,6 +1,5 @@
 package com.pachiraframework.watchdog.kafka.consumer.data;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,7 +8,6 @@ import lombok.Data;
  *
  */
 @Data
-@Builder
 public class LogMessage {
 	/**
 	 * 日志消息内容

@@ -107,7 +107,7 @@ filebeat.inputs:
   multiline.match: after
 ```
 
-### kafka服务器端相关操作命令你
+### kafka服务器端相关操作命令
 启动kafka
 > kafka-server-start.bat server.properties
 启动kafka consumer(topic名称是lxw1234)
