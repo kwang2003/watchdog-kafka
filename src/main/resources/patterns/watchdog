@@ -1,1 +1,8 @@
 ANYTHING [\s\S]*
+
+# Nginx
+NGINXACCESS %{IPORHOST:clientip} \[%{HTTPDATE:timestamp}\] "%{WORD:verb} %{URIPATHPARAM:request} HTTP/%{NUMBER:httpversion}" (?:%{QS:content_type}|-) (?:%{QS:request_body}|-) (?:"(?:%{URI:referrer}|-)"|%{QS:referrer}) %{NUMBER:response} %{BASE16FLOAT:request_time} (?:%{NUMBER:bytes}|-)
+NGINXERROR_DATESTAMP %{YEAR}/%{MONTHNUM}/%{MONTHDAY} %{TIME}
+NGINXERROR_PID (?:[0-9]+#[0-9]+\:)
+NGINXERROR_TID (?:\*[0-9]+)
+NGINXERROR %{NGINXERROR_DATESTAMP:timestamp} \[%{LOGLEVEL:loglevel}\] %{NGINXERROR_PID:pid} %{NGINXERROR_TID:tid} %{GREEDYDATA:errormsg}, client: %{IPORHOST:clientip}, server: %{HOSTNAME:server}, request: %{QS:request}(?:, upstream: %{QS:upstream})?, host: \"%{HOSTNAME:hostname}\"(?:, referrer: (?:"(?:%{URI:referrer}|-)"|%{QS:referrer}))?

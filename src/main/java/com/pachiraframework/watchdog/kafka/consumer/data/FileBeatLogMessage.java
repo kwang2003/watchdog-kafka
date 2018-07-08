@@ -10,7 +10,7 @@ import lombok.Data;
  *
  */
 @Data
-public class ApplicationLog {
+public class FileBeatLogMessage {
 	@SerializedName("@timestamp")
 	private String timestamp;
 	@SerializedName("@metadata")

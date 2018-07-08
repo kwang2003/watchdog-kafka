@@ -7,16 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.pachiraframework.watchdog.kafka.consumer.data.ApplicationLog;
+import com.pachiraframework.watchdog.kafka.consumer.data.FileBeatLogMessage;
 import com.pachiraframework.watchdog.kafka.consumer.data.LogMessage;
 import com.pachiraframework.watchdog.kafka.consumer.data.hadler.LogMessageHandlerChain;
 
-import io.krakens.grok.api.Grok;
-import io.krakens.grok.api.GrokCompiler;
 import io.krakens.grok.api.Match;
-import lombok.SneakyThrows;
 
 /**
  * 应用日志监听，日志中的log4j.xml配置如下：
@@ -43,20 +38,18 @@ import lombok.SneakyThrows;
  * @author kevin wang
  */
 @Component
-public class ApplicationLogConsumer extends AbstractKafkaConsumer {
-	private Grok applicationLogGrok = applicationLogGrok();
-	private Gson gson = new GsonBuilder().create();
+public class ApplicationLogConsumer extends AbstractKafkaConsumer{
+	private static final String PATTERN = "\\[%{NOTSPACE:thread}\\]%{SPACE}%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{LOGLEVEL:level}%{SPACE}\\[%{NOTSPACE:location}\\]%{SPACE}%{ANYTHING:message}";
 	@Autowired
 	private LogMessageHandlerChain logMessageHandlerChain;
 	@KafkaListener(topics = "lxw1234")
 	public void listen(ConsumerRecord<Integer, String> cr) throws Exception {
-		String message = cr.value();
-		ApplicationLog applicationLog = gson.fromJson(message, ApplicationLog.class);
-		Match match = applicationLogGrok.match(applicationLog.getMessage());
+		FileBeatLogMessage fileBeatLogMessage = consumeFileBeatLogMessage(cr);
+		Match match = getGrok().match(fileBeatLogMessage.getMessage());
 		final Map<String, Object> capture = match.capture();
 		LogMessage logMessage = buildLogMessage(capture);
-		logMessage.setHost(applicationLog.getFields()==null?applicationLog.getBeat().getHostname():applicationLog.getFields().getIp());
-		logMessage.setAppId(applicationLog.getFields()== null?"NOT_PROVIDED":applicationLog.getFields().getAppId());
+		logMessage.setHost(fileBeatLogMessage.getFields()==null?fileBeatLogMessage.getBeat().getHostname():fileBeatLogMessage.getFields().getIp());
+		logMessage.setAppId(fileBeatLogMessage.getFields()== null?"NOT_PROVIDED":fileBeatLogMessage.getFields().getAppId());
 	
 		logMessageHandlerChain.handle(logMessage);
 	}
@@ -79,18 +72,9 @@ public class ApplicationLogConsumer extends AbstractKafkaConsumer {
 		logMessage.setMessage(message);
 		return logMessage;
 	}
-	
-	@SneakyThrows
-	private Grok applicationLogGrok(){
-		/* Create a new grokCompiler instance */
-		GrokCompiler grokCompiler = GrokCompiler.newInstance();
-		grokCompiler.registerDefaultPatterns();
-		grokCompiler.registerPatternFromClasspath("/patterns/watchdog");
 
-		/* Grok pattern to compile, here httpd logs */
-//		final Grok grok = grokCompiler.compile("\\[%{NOTSPACE:thread}\\]%{SPACE}%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{LOGLEVEL:level}%{SPACE}\\[%{NOTSPACE:location}\\]%{SPACE}%{GREEDYDATA:message}(?<message>(.|\\r|\\n)*)");
-//		final Grok grok = grokCompiler.compile("\\[%{NOTSPACE:thread}\\]%{SPACE}%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{LOGLEVEL:level}%{SPACE}\\[%{NOTSPACE:location}\\]%{SPACE}(?m)%{GREEDYDATA:message}");
-		final Grok grok = grokCompiler.compile("\\[%{NOTSPACE:thread}\\]%{SPACE}%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{LOGLEVEL:level}%{SPACE}\\[%{NOTSPACE:location}\\]%{SPACE}%{ANYTHING:message}");
-		return grok;
+	@Override
+	protected String matchPattern() {
+		return PATTERN;
 	}
 }
