@@ -1,6 +1,5 @@
 package com.pachiraframework.watchdog.kafka.consumer;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;

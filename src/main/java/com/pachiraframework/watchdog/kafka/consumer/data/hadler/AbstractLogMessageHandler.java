@@ -29,7 +29,16 @@ public abstract class AbstractLogMessageHandler {
 		}
 	}
 	
+	/**
+	 * 具体的处理逻辑
+	 * @param logMessage
+	 */
 	protected abstract void doHandle(LogMessage logMessage);
 	
+	/**
+	 * 当前的日志消息是否匹配当前处理器
+	 * @param logMessage
+	 * @return
+	 */
 	protected abstract boolean match(LogMessage logMessage);
 }
