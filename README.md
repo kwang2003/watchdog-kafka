@@ -123,6 +123,21 @@ filebeat.inputs:
   multiline.match: after
 ```
 
+filebeat的读取日志文件位置保存在filebeat-6.3.0-windows-x86_64\data目录下
+
+- registry文件内容如下(核心)
+
+```
+[{"source":"D:\\home\\admin\\output\\logs\\javalog\\nginx-access.log","offset":85717,"timestamp":"2018-07-09T17:17:58.8132721+08:00","ttl":-1,"type":"log","FileStateOS":{"idxhi":1572864,"idxlo":79432,"vol":877113}},{"source":"D:\\home\\admin\\output\\logs\\javalog\\shoppingmall_search_web.log","offset":6993,"timestamp":"2018-07-09T17:17:58.7192668+08:00","ttl":-1,"type":"log","FileStateOS":{"idxhi":1900544,"idxlo":797606,"vol":877113}}]
+```
+
+- meta.json文件内容
+
+```
+{"uuid":"2bfaae15-f4ee-4f20-8743-9aae63428f95"}
+
+```
+
 ### kafka服务器端相关操作命令
 启动kafka
 > kafka-server-start.bat server.properties
@@ -141,3 +156,4 @@ filebeat.inputs:
 
 创建异常日志队列5个分区
 > kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic exception-topic
+
