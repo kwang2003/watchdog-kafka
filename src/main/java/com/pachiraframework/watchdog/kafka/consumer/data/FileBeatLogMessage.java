@@ -1,5 +1,7 @@
 package com.pachiraframework.watchdog.kafka.consumer.data;
 
+import java.util.Map;
+
 import com.google.gson.annotations.SerializedName;
 
 import lombok.Data;
@@ -19,5 +21,6 @@ public class FileBeatLogMessage {
 	private String source;
 	private Long offset;
 	private String message;
-	private Fields fields;
+//	private Fields fields;
+	private Map<String, String> fields;
 }

@@ -43,6 +43,7 @@ public abstract class AbstractKafkaConsumer implements InitializingBean{
 		GrokCompiler grokCompiler = GrokCompiler.newInstance();
 		grokCompiler.registerDefaultPatterns();
 		grokCompiler.registerPatternFromClasspath("/patterns/watchdog");
+		grokCompiler.registerPatternFromClasspath("/patterns/nginx");
 		return grokCompiler;
 	}
 

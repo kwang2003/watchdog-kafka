@@ -42,14 +42,14 @@ public class ApplicationLogConsumer extends AbstractKafkaConsumer{
 	private static final String PATTERN = "\\[%{NOTSPACE:thread}\\]%{SPACE}%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{LOGLEVEL:level}%{SPACE}\\[%{NOTSPACE:location}\\]%{SPACE}%{ANYTHING:message}";
 	@Autowired
 	private LogMessageHandlerChain logMessageHandlerChain;
-	@KafkaListener(topics = "lxw1234")
+	@KafkaListener(topics = "application-log-topic")
 	public void listen(ConsumerRecord<Integer, String> cr) throws Exception {
 		FileBeatLogMessage fileBeatLogMessage = consumeFileBeatLogMessage(cr);
 		Match match = getGrok().match(fileBeatLogMessage.getMessage());
 		final Map<String, Object> capture = match.capture();
 		LogMessage logMessage = buildLogMessage(capture);
-		logMessage.setHost(fileBeatLogMessage.getFields()==null?fileBeatLogMessage.getBeat().getHostname():fileBeatLogMessage.getFields().getIp());
-		logMessage.setAppId(fileBeatLogMessage.getFields()== null?"NOT_PROVIDED":fileBeatLogMessage.getFields().getAppId());
+		logMessage.setHost(fileBeatLogMessage.getFields()==null?fileBeatLogMessage.getBeat().getHostname():fileBeatLogMessage.getFields().get("ip"));
+		logMessage.setAppId(fileBeatLogMessage.getFields()== null?"NOT_PROVIDED":fileBeatLogMessage.getFields().get("app_id"));
 	
 		logMessageHandlerChain.handle(logMessage);
 	}
