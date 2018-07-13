@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 
 import com.pachiraframework.watchdog.kafka.consumer.data.FileBeatLogMessage;
 import com.pachiraframework.watchdog.kafka.consumer.data.LogMessage;
@@ -37,21 +35,37 @@ import io.krakens.grok.api.Match;
  *  </pre>
  * @author kevin wang
  */
-@Component
-public class ApplicationLogConsumer extends AbstractKafkaConsumer{
+public class Log4jFormatLogConsumer extends AbstractKafkaConsumer{
 	private static final String PATTERN = "\\[%{NOTSPACE:thread}\\]%{SPACE}%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{LOGLEVEL:level}%{SPACE}\\[%{NOTSPACE:location}\\]%{SPACE}%{ANYTHING:message}";
 	@Autowired
 	private LogMessageHandlerChain logMessageHandlerChain;
-	@KafkaListener(topics = "application-log-topic")
+	
 	public void listen(ConsumerRecord<Integer, String> cr) throws Exception {
+		LogMessage logMessage = convertToLogMessage(cr);
+		handleLogMessage(logMessage);
+	}
+	
+	/**
+	 * 转化成LogMessage的后续处理措施
+	 * @param logMessage
+	 */
+	protected void handleLogMessage(LogMessage logMessage) {
+		logMessageHandlerChain.handle(logMessage);
+	}
+	
+	/**
+	 * 将kafka消息中的内容转化为统一格式的LogMessage对象
+	 * @param cr
+	 * @return
+	 */
+	protected LogMessage convertToLogMessage(ConsumerRecord<Integer, String> cr) {
 		FileBeatLogMessage fileBeatLogMessage = consumeFileBeatLogMessage(cr);
 		Match match = getGrok().match(fileBeatLogMessage.getMessage());
 		final Map<String, Object> capture = match.capture();
 		LogMessage logMessage = buildLogMessage(capture);
 		logMessage.setHost(fileBeatLogMessage.getFields()==null?fileBeatLogMessage.getBeat().getHostname():fileBeatLogMessage.getFields().get("ip"));
 		logMessage.setAppId(fileBeatLogMessage.getFields()== null?"NOT_PROVIDED":fileBeatLogMessage.getFields().get("app_id"));
-	
-		logMessageHandlerChain.handle(logMessage);
+		return logMessage;
 	}
 	
 	
